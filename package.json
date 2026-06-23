@@ -1,0 +1,13 @@
+﻿{
+  "name": "studysmart-ai",
+  "version": "1.0.0",
+  "description": "StudySmart AI - study material generator backed by Groq, with the API key kept server-side.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

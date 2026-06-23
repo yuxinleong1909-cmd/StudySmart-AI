@@ -658,7 +658,7 @@
   </div>
   <div class="status-pill">
     <span class="dot"></span>
-    Demo mode — sample output
+    Connected to backend
   </div>
 </header>
 
@@ -739,104 +739,22 @@
         <div class="summary-card">
           <h3>Key points</h3>
           <ul>
-            <li>Photosynthesis converts light energy into chemical energy stored as glucose.</li>
-            <li>It occurs in the chloroplasts, mainly using the pigment chlorophyll.</li>
-            <li>The process has two stages: light-dependent reactions and the Calvin cycle.</li>
-            <li>Inputs are carbon dioxide, water, and sunlight. Outputs are glucose and oxygen.</li>
+            <li>Your generated summary will appear here.</li>
           </ul>
         </div>
       </div>
 
       <div class="tab-panel" id="panel-flashcards">
-        <div class="flash-grid">
-
-          <div class="flash-card" tabindex="0" role="button" aria-label="Flashcard, tap to reveal answer">
-            <div class="flash-inner">
-              <div class="flash-face flash-front">
-                <span class="flash-tag">Question</span>
-                <span class="q">What are the two main stages of photosynthesis?</span>
-                <span class="tap-hint">Tap to reveal</span>
-              </div>
-              <div class="flash-face flash-back">
-                <span class="a">Light-dependent reactions and the Calvin cycle (light-independent reactions).</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="flash-card" tabindex="0" role="button" aria-label="Flashcard, tap to reveal answer">
-            <div class="flash-inner">
-              <div class="flash-face flash-front">
-                <span class="flash-tag">Question</span>
-                <span class="q">Where in the cell does photosynthesis take place?</span>
-                <span class="tap-hint">Tap to reveal</span>
-              </div>
-              <div class="flash-face flash-back">
-                <span class="a">In the chloroplasts, specifically across the thylakoid membranes.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="flash-card" tabindex="0" role="button" aria-label="Flashcard, tap to reveal answer">
-            <div class="flash-inner">
-              <div class="flash-face flash-front">
-                <span class="flash-tag">Question</span>
-                <span class="q">What gas is released as a byproduct?</span>
-                <span class="tap-hint">Tap to reveal</span>
-              </div>
-              <div class="flash-face flash-back">
-                <span class="a">Oxygen — released when water molecules are split during the light reactions.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="flash-card" tabindex="0" role="button" aria-label="Flashcard, tap to reveal answer">
-            <div class="flash-inner">
-              <div class="flash-face flash-front">
-                <span class="flash-tag">Question</span>
-                <span class="q">Which pigment captures most of the light energy?</span>
-                <span class="tap-hint">Tap to reveal</span>
-              </div>
-              <div class="flash-face flash-back">
-                <span class="a">Chlorophyll, which absorbs mostly red and blue light.</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <div class="flash-grid"></div>
       </div>
 
       <div class="tab-panel" id="panel-mcq">
-        <div class="mcq-list">
-
-          <div class="mcq-card" data-correct="2">
-            <p class="mcq-q">1. What is the primary output of the Calvin cycle?</p>
-            <div class="mcq-choices">
-              <div class="mcq-choice" data-letter="A"><span class="letter">A</span> Oxygen gas</div>
-              <div class="mcq-choice" data-letter="B"><span class="letter">B</span> Water</div>
-              <div class="mcq-choice" data-letter="C"><span class="letter">C</span> Glucose</div>
-              <div class="mcq-choice" data-letter="D"><span class="letter">D</span> Carbon dioxide</div>
-            </div>
-            <p class="mcq-explain">The Calvin cycle fixes carbon dioxide into glucose using ATP and NADPH from the light reactions.</p>
-          </div>
-
-          <div class="mcq-card" data-correct="1">
-            <p class="mcq-q">2. Where do the light-dependent reactions occur?</p>
-            <div class="mcq-choices">
-              <div class="mcq-choice" data-letter="A"><span class="letter">A</span> Mitochondrial matrix</div>
-              <div class="mcq-choice" data-letter="B"><span class="letter">B</span> Thylakoid membrane</div>
-              <div class="mcq-choice" data-letter="C"><span class="letter">C</span> Nucleus</div>
-              <div class="mcq-choice" data-letter="D"><span class="letter">D</span> Cell wall</div>
-            </div>
-            <p class="mcq-explain">The thylakoid membrane houses the photosystems that capture light energy.</p>
-          </div>
-
-        </div>
+        <div class="mcq-list"></div>
       </div>
 
       <div class="tab-panel" id="panel-explanation">
         <div class="explain-card">
-          <p>Think of a leaf as a tiny solar-powered kitchen. Sunlight is the power source, water and carbon dioxide are the raw ingredients, and <span class="term">glucose</span> is the meal the plant cooks for itself. The leftover ingredient it doesn't need, oxygen, gets released into the air — which happens to be the same air we breathe.</p>
-          <p>The "kitchen" itself is the <span class="term">chloroplast</span>, and the green pigment <span class="term">chlorophyll</span> is what actually catches the sunlight, the way a solar panel catches rays.</p>
+          <p>Your generated explanation will appear here.</p>
         </div>
       </div>
 
@@ -893,8 +811,6 @@
   fileInput.addEventListener('change', () => {
     if(fileInput.files[0]) handleFile(fileInput.files[0]);
   });
-
-  console.log("UPLOAD TRIGGERED");
 
   async function handleFile(file){
     try {
@@ -976,34 +892,29 @@
 
   function clearError(){
     errorBanner.classList.remove('show');
+    errorBanner.style.background = '';
+    errorBanner.style.color = '';
   }
 
   // --- Generate flow ---
+  // NOTE: There is no API key here anymore. The browser calls OUR OWN
+  // backend at /api/generate, and the backend (server.js) is the only
+  // place that knows the real Gemini key. Change this URL if your
+  // backend is hosted somewhere other than the same origin as this page.
 
-  // PASTE YOUR GEMINI API KEY BETWEEN THE QUOTES BELOW.
-  // Get one free at https://aistudio.google.com -> "Get API key"
-  
+  const BACKEND_URL = "/api/generate";
 
   generateBtn.addEventListener('click', async () => {
     const notesText = notesInput.value.trim();
-    const hasNotes = notesText.length > 0;
     const selectedTools = [...document.querySelectorAll('.tool-option input:checked')]
       .map(cb => cb.closest('.tool-option').dataset.target);
 
     if(notesText.length === 0){
-    showError('Please wait for file to load or paste text manually.');
-    return;
-    }
-    if(!hasNotes){
       showError('Add some notes first — upload a file or paste text above.');
       return;
     }
     if(selectedTools.length === 0){
       showError('Select at least one study tool to generate.');
-      return;
-    }
-        if(!notesText){
-      showError('Please wait for file to load or paste text manually.');
       return;
     }
 
@@ -1012,7 +923,7 @@
     generateBtn.disabled = true;
 
     try{
-      const data = await callGemini(notesText, selectedTools);
+      const data = await callBackend(notesText, selectedTools);
       renderResults(data, selectedTools);
 
       resultsEmpty.style.display = 'none';
@@ -1021,53 +932,42 @@
 
     }catch(err){
       console.error(err);
-      showError('Something went wrong generating your materials. Check the console for details, or verify your API key.');
+      showError(err.message || 'Something went wrong generating your materials. Check the console for details.');
     }finally{
       generateBtn.classList.remove('loading');
       generateBtn.disabled = false;
     }
   });
 
-  // Calls Gemini and asks it to return strict JSON we can render directly.
-  async function callGemini(notes, tools){
-    const prompt = `
-You are an assistant that turns student notes into study materials.
-Return ONLY valid JSON (no markdown fences, no extra text) matching this exact shape:
-
-{
-  "summary": ["point 1", "point 2", "point 3", "point 4"],
-  "flashcards": [{"question": "...", "answer": "..."}, ... 4 items],
-  "mcq": [{"question": "...", "choices": ["...","...","...","..."], "correctIndex": 0, "explanation": "..."}, ... 2 items],
-  "explanation": "a simple, friendly explanation using an analogy, 2 short paragraphs"
-}
-
-Only include the keys for these requested sections: ${tools.join(", ")}.
-Base everything strictly on these notes:
-"""
-${notes}
-"""
-`;
-
-    const response = await fetch(GEMINI_URL, {
+  // Calls OUR backend (not Gemini directly) and gets back ready-to-render JSON.
+  async function callBackend(notes, tools){
+    const response = await fetch(BACKEND_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+      body: JSON.stringify({ notes, tools })
     });
 
     if(!response.ok){
-      throw new Error("API request failed: " + response.status);
+      let message = "Request failed: " + response.status;
+      try{
+        const errJson = await response.json();
+        if(errJson.error) message = errJson.error;
+      }catch(_){ /* response wasn't JSON, keep generic message */ }
+      throw new Error(message);
     }
 
-    const result = await response.json();
-    const rawText = result.candidates[0].content.parts[0].text;
-    const cleaned = rawText.replace(/```json|```/g, "").trim();
-    return JSON.parse(cleaned);
+    return await response.json();
   }
 
-  // Renders the Gemini JSON response into the existing tab panels.
+  // Renders the backend's JSON response into the existing tab panels.
   function renderResults(data, tools){
+    if(data._notice){
+      errorText.textContent = data._notice;
+      errorBanner.classList.add('show');
+      errorBanner.style.background = 'var(--sage-bg)';
+      errorBanner.style.color = 'var(--sage)';
+    }
+
     if(data.summary){
       document.querySelector('#panel-summary .summary-card ul').innerHTML =
         data.summary.map(point => `<li>${escapeHtml(point)}</li>`).join('');
@@ -1133,7 +1033,7 @@ ${notes}
     tab.addEventListener('click', () => activateTab(tab.dataset.tab));
   });
 
-  // --- Flashcard flip (reusable: called on load + after AI re-render) ---
+  // --- Flashcard flip (reusable: called after AI render) ---
 
   function attachFlashcardHandlers(){
     document.querySelectorAll('.flash-card').forEach(card => {
@@ -1148,7 +1048,7 @@ ${notes}
     });
   }
 
-  // --- MCQ answer selection (reusable: called on load + after AI re-render) ---
+  // --- MCQ answer selection (reusable: called after AI render) ---
 
   function attachMcqHandlers(){
     document.querySelectorAll('.mcq-card').forEach(card => {
@@ -1172,10 +1072,6 @@ ${notes}
       });
     });
   }
-
-  // Wire up the sample content that's on the page by default
-  attachFlashcardHandlers();
-  attachMcqHandlers();
 
 </script>
 

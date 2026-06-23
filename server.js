@@ -12,14 +12,14 @@ app.use(express.static("public")); // serves index.html from /public
 
 // The key lives ONLY here, read from an environment variable.
 // Set it before starting the server, e.g.:
-//   $env:GROQ_API_KEY="gsk_..."
+//   export GROQ_API_KEY="gsk_..."
 //   node server.js
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 if (!GROQ_API_KEY) {
   console.error(
     "ERROR: GROQ_API_KEY environment variable is not set.\n" +
-    "Run: $env:GROQ_API_KEY=\"your-key-here\"  (then restart the server)"
+    "Run: export GROQ_API_KEY=\"your-key-here\"  (then restart the server)"
   );
   process.exit(1);
 }
@@ -28,15 +28,31 @@ if (!GROQ_API_KEY) {
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile"; // update here if Groq retires this model
 
+// Roughly 4 characters per token for English text, and llama-3.3-70b-versatile
+// has a context window in the tens of thousands of tokens shared between
+// input AND output. We cap input notes well under that so the prompt +
+// requested JSON output both fit comfortably, and so we stay under Groq's
+// per-request payload size limit (this is what was causing HTTP 413s).
+const MAX_NOTES_CHARACTERS = 12000;
+
 app.post("/api/generate", async (req, res) => {
   try {
-    const { notes, tools } = req.body;
+    let { notes, tools } = req.body;
 
     if (!notes || typeof notes !== "string" || notes.trim().length === 0) {
       return res.status(400).json({ error: "No notes provided." });
     }
     if (!Array.isArray(tools) || tools.length === 0) {
       return res.status(400).json({ error: "No study tools selected." });
+    }
+
+    let wasTruncated = false;
+    if (notes.length > MAX_NOTES_CHARACTERS) {
+      notes = notes.slice(0, MAX_NOTES_CHARACTERS);
+      wasTruncated = true;
+      console.log(
+        `Notes truncated from original length down to ${MAX_NOTES_CHARACTERS} characters.`
+      );
     }
 
     const prompt = `
@@ -69,6 +85,11 @@ ${notes}
         // Groq supports forcing valid JSON output directly, which avoids
         // a lot of the markdown-fence / stray-text cleanup Gemini needed.
         response_format: { type: "json_object" },
+        // Without this, the model can run out of room mid-response and
+        // return incomplete/invalid JSON (this is what caused the earlier
+        // "json_validate_failed" error) — give it enough headroom to
+        // finish summary + flashcards + mcq + explanation in one go.
+        max_tokens: 3000,
       }),
     });
 
@@ -94,6 +115,10 @@ ${notes}
     } catch (parseErr) {
       console.error("Failed to parse Groq JSON. Raw text was:\n", rawText);
       return res.status(502).json({ error: "Groq did not return valid JSON. See server logs." });
+    }
+
+    if (wasTruncated) {
+      data._notice = `Your notes were long, so only the first ${MAX_NOTES_CHARACTERS.toLocaleString()} characters were used to generate these materials.`;
     }
 
     res.json(data);
